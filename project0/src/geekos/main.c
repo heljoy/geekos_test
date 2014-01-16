@@ -23,6 +23,32 @@
 
 
 
+static void PrintKey(ulong_t arg)
+{
+	Keycode key;
+	int row, col, count = 0;
+
+	while(1) {
+		key = Wait_For_Key();
+
+		/* filter release keycode */
+		if (KB_KEY_RELEASE & (key>>8))
+			continue;
+
+		if (key == 0x0d)
+			Print("\n");
+		else
+			Print("%c", key);
+
+		/* Print count at corner of screen */
+		Get_Cursor(&row, &col);
+		Put_Cursor(0, 76);
+		Print("    ");
+		Put_Cursor(0, 76);
+		Print("%d", count++);
+		Put_Cursor(row, col);
+	}
+}
 
 /*
  * Kernel C code entry point.
@@ -48,8 +74,10 @@ void Main(struct Boot_Info* bootInfo)
     Set_Current_Attr(ATTRIB(BLACK, GRAY));
 
 
-    TODO("Start a kernel thread to echo pressed keys and print counts");
+    //TODO("Start a kernel thread to echo pressed keys and print counts");
 
+    Print("starting echo thread\n");
+    Start_Kernel_Thread(PrintKey, 0, PRIORITY_NORMAL, true);
 
 
     /* Now this thread is done. */
