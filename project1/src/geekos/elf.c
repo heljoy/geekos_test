@@ -30,6 +30,13 @@
 int Parse_ELF_Executable(char *exeFileData, ulong_t exeFileLength,
     struct Exe_Format *exeFormat)
 {
+    elfHeader *eheader = (elfHeader *)exeFileData;
+    programHeader *pheader = (programHeader *)exeFileData+eheader->phoff;
+
+    exeFormat->entryAddr = eheader->entry;
+    exeFormat->numSegments = eheader->shnum;
+
     TODO("Parse an ELF executable image");
+
 }
 
